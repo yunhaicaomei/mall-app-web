@@ -5,7 +5,7 @@
 		<view class="right-top-sign"></view>
 		<!-- 设置白色背景防止软键盘把下部绝对定位元素顶上来盖住输入框等 -->
 		<view class="wrapper">
-			<view class="empty">
+			<view class="empty" style="display: none;">
 				<image src="/static/qrcode_for_macrozheng_258.jpg" mode="aspectFit"></image>
 				<view class="empty-tips">
 					扫描上方二维码<view class="navigator">关注公众号</view>，
@@ -14,6 +14,31 @@
 					回复<view class="navigator">会员</view>获取体验账号。
 				</view>
 			</view>
+			<view class="register-section">
+				<view class="left-top-sign">LOGIN</view>
+				<view class="input-content">
+					<view class="input-item">
+						<text class="tit">用户名</text>
+						<input type="text" v-model="username" placeholder="请输入用户名" maxlength="11"/>
+					</view>
+					<view class="input-item">
+						<text class="tit">密码</text>
+						<input type="text" v-model="password" placeholder="8-18位不含特殊字符的数字、字母组合" placeholder-class="input-empty" maxlength="20"
+						 password @confirm="toLogin" />
+					</view>
+					<view class="input-item">
+						<text class="tit">手机号</text>
+						<input type="text" v-model="telephone" placeholder="13位数字" placeholder-class="input-empty" maxlength="20"
+						 telephone @confirm="toLogin" />
+					</view>
+					<view class="input-item">
+						<text class="tit">密码</text>
+						<input type="text" v-model="authCode" placeholder="验证码" placeholder-class="input-empty" maxlength="20"
+						 authCode @confirm="toLogin" />
+					</view>
+				</view>
+				<button class="confirm-btn" @click="toLogin" :disabled="logining">注册</button>
+			</view>
 		</view>
 	</view>
 </template>
@@ -21,13 +46,39 @@
 <script>
 	export default {
 		data() {
-			return {}
+			return {
+				username: '',
+				password: '',
+				telephone: '',
+				authCode: '',
+				logining: false
+			}
 		},
 		onLoad() {
 		},
 		methods: {
 			navBack() {
 				uni.navigateBack();
+			},
+			async toRegist() {
+				this.logining = true;
+				memberLogin({
+					username: this.username,
+					password: this.password,
+					telephone: this.telephone,
+					authCode: this.authCode
+				}).then(response => {
+					let token = response.data.tokenHead+response.data.token;
+					uni.setStorageSync('token',token);
+					uni.setStorageSync('username',this.username);
+					uni.setStorageSync('password',this.password);
+					memberInfo().then(response=>{
+						// this.login(response.data);
+						uni.navigateBack();
+					});
+				}).catch(() => {
+					this.logining = false;
+				});
 			},
 		},
 

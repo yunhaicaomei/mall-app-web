@@ -12,6 +12,7 @@
 
 <script>
 	import {
+		fetchOrderDetail,
 		fetchAliapyStatus
 	} from '@/api/order.js';
 	import { USE_ALIPAY } from '@/utils/appConfig.js';
@@ -23,6 +24,8 @@
 			}
 		},
 		onLoad(options) {
+			this.payText = '支付成功';
+			/**
 			if(!USE_ALIPAY){
 				this.payText = '支付成功';
 				return;
@@ -38,6 +41,7 @@
 				}
 				console.log(this.tradeStatus);
 			});
+			*/
 		},
 		methods: {
 			

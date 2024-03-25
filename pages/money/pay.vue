@@ -28,6 +28,9 @@
 				</label>
 			</view>
 		</view>
+		<view style="display: none;">
+			<div ref="formHtml"></div>
+		</view>
 
 		<text class="mix-btn" @click="confirm">确认支付</text>
 	</view>
@@ -35,6 +38,7 @@
 
 <script>
 	import {
+		generatePayUrl,
 		fetchOrderDetail,
 		payOrderSuccess
 	} from '@/api/order.js';
@@ -60,6 +64,21 @@
 			},
 			//确认支付
 			confirm: async function() {
+				generatePayUrl({
+					orderId: this.orderInfo.id,
+					payType: this.payType
+				}).then(response => {
+					if (response.data) {
+						var data = response.data;
+						if (data.url) {
+							window.location.href = data.url;
+						} else if (data.form) {
+							this.$refs.formHtml.innerHTML = data.form;
+							this.$refs.formHtml.children&&this.$refs.formHtml.children[0]&&this.$refs.formHtml.children[0].submit();
+						}
+					}
+				});
+				/**
 				if(USE_ALIPAY){
 					if(this.payType!=1){
 						uni.showToast({
@@ -79,7 +98,7 @@
 						})
 					});
 				}
-
+				*/
 			},
 		}
 	}

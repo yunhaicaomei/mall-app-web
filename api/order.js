@@ -16,6 +16,17 @@ export function generateOrder(data) {
 	})
 }
 
+export function generatePayUrl(data) {
+	return request({
+		method: 'POST',
+		url: '/order/generatePayUrl',
+		header: {
+			'content-type': 'application/x-www-form-urlencoded;charset=utf-8'
+		},
+		data: data
+	})
+}
+
 export function fetchOrderList(params) {
 	return request({
 		method: 'GET',
