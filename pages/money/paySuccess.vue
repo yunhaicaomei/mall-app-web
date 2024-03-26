@@ -24,7 +24,11 @@
 			}
 		},
 		onLoad(options) {
-			this.payText = '支付成功';
+			if(options.tradeStatus&&'success'==options.tradeStatus){
+				this.payText = '支付成功';
+			}else{
+				this.payText = '支付失败';
+			}
 			/**
 			if(!USE_ALIPAY){
 				this.payText = '支付成功';
