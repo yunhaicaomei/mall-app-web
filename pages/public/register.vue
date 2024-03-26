@@ -24,26 +24,29 @@
 					<view class="input-item">
 						<text class="tit">密码</text>
 						<input type="text" v-model="password" placeholder="8-18位不含特殊字符的数字、字母组合" placeholder-class="input-empty" maxlength="20"
-						 password @confirm="toLogin" />
+						 password @confirm="toRegist" />
 					</view>
 					<view class="input-item">
 						<text class="tit">手机号</text>
 						<input type="text" v-model="telephone" placeholder="13位数字" placeholder-class="input-empty" maxlength="20"
-						 telephone @confirm="toLogin" />
+						 telephone @confirm="toRegist" />
 					</view>
-					<view class="input-item">
-						<text class="tit">密码</text>
+					<view class="input-item" style="display: none;">
+						<text class="tit">验证码</text>
 						<input type="text" v-model="authCode" placeholder="验证码" placeholder-class="input-empty" maxlength="20"
-						 authCode @confirm="toLogin" />
+						 authCode @confirm="toRegist" />
 					</view>
 				</view>
-				<button class="confirm-btn" @click="toLogin" :disabled="logining">注册</button>
+				<button class="confirm-btn" @click="toRegist" :disabled="logining">注册</button>
 			</view>
 		</view>
 	</view>
 </template>
 
 <script>
+	import {
+		memberLogin,memberInfo,memberRegister
+	} from '@/api/member.js';
 	export default {
 		data() {
 			return {
@@ -62,20 +65,31 @@
 			},
 			async toRegist() {
 				this.logining = true;
-				memberLogin({
+				memberRegister({
 					username: this.username,
 					password: this.password,
 					telephone: this.telephone,
 					authCode: this.authCode
 				}).then(response => {
-					let token = response.data.tokenHead+response.data.token;
-					uni.setStorageSync('token',token);
-					uni.setStorageSync('username',this.username);
-					uni.setStorageSync('password',this.password);
-					memberInfo().then(response=>{
-						// this.login(response.data);
-						uni.navigateBack();
+					uni.showToast({
+						title: response.message,
+						icon: "none",
+						duration:1000
 					});
+					setTimeout(()=>{
+						if (response.code =="200") {
+							uni.navigateTo({url:'/pages/public/login'});
+							return;
+						}
+					}, 1000);
+					// let token = response.data.tokenHead+response.data.token;
+					// uni.setStorageSync('token',token);
+					// uni.setStorageSync('username',this.username);
+					// uni.setStorageSync('password',this.password);
+					// memberInfo().then(response=>{
+					// 	this.login(response.data);
+					// 	uni.navigateBack();
+					// });
 				}).catch(() => {
 					this.logining = false;
 				});
